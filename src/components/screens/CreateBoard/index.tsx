@@ -1,0 +1,1 @@
+export { default as CreateBoardScreen } from './CreateBoardScreen.container';

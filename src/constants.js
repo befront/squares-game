@@ -1,0 +1,6 @@
+export const SCREENS = {
+    START: 'START',
+    CREATE_BOARD: 'CREATE_BOARD',
+    CREATE_PLAYERS: 'CREATE_PLAYERS',
+    GAME: 'GAME'
+};
