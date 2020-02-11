@@ -1,5 +1,6 @@
 import orderBy from 'lodash/orderBy';
 import uniq from 'lodash/uniq';
+import flatten from 'lodash/flatten';
 
 export const isCurrentPlayer = (currentPlayer: PlayerType, player: PlayerType): boolean => currentPlayer.id === player.id;
 
@@ -76,11 +77,17 @@ export const getPlayerPoints = (cells: CellType[]) : number => {
             
         const intersectCells = getIntersectCells(orderedCells, orderedCells[i]);
 
-        const lineIndex = lines.findIndex(item => item.indexOf(cell) > -1);
+        const linesWithCell = lines.filter(item => item.indexOf(cell) > -1);
 
-        if (lineIndex > -1) {
-            lines[lineIndex] = uniq(lines[lineIndex]
-                .concat(intersectCells.map(cell => `${cell.rowIndex}:${cell.columnIndex}`)));
+        if (linesWithCell.length > 0) {
+            lines.push(uniq(
+                flatten(linesWithCell)
+                    .concat(intersectCells
+                        .map(cell => `${cell.rowIndex}:${cell.columnIndex}`)
+                    )
+                )
+            );
+
         } else {
             line = line.concat(intersectCells.map(cell => `${cell.rowIndex}:${cell.columnIndex}`));
 
