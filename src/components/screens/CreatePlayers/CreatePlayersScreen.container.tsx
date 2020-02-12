@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import { SCREENS } from '@constants';
 
-import { useGame } from '@context/Game';
+import { useGameDispatch, useGameState } from '@context/Game';
 
 import { PLAYERS_COUNT } from './CreatePlayersScreen.constants';
 
-import { hasPlayersNames } from './CreatePlayers.utils';
+import { hasPlayersNames } from './CreatePlayersScreen.utils';
 
 import CreatePlayersScreen from './CreatePlayersScreen';
 
@@ -15,10 +15,11 @@ interface IProps {
 }
 
 const CreatePlayersScreenContainer: React.FC<IProps> = ({ setCurrentScreen }) => {
-    const [game, dispatchGame] = useGame();
+    const dispatchGame = useGameDispatch();
+    const game = useGameState();
 
     React.useEffect(() => {
-        if (!Object.keys(game.players).length) {
+        if (!game.players.length) {
             for (let i = 0; i < PLAYERS_COUNT; i++) {
                 dispatchGame({
                     type: 'CREATE_PLAYER'
@@ -46,11 +47,18 @@ const CreatePlayersScreenContainer: React.FC<IProps> = ({ setCurrentScreen }) =>
         });
     };
 
+    const handleAddPlayerClick = () => {
+        dispatchGame({
+            type: 'CREATE_PLAYER'
+        });
+    };
+
     return (
         <CreatePlayersScreen
             players={game.players}
             onInputChange={handleInputChange}
             onContinueClick={handleContinueClick}
+            onAddPlayerClick={handleAddPlayerClick}
         />
     );
 };

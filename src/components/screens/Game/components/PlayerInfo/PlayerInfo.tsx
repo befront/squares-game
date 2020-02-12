@@ -9,7 +9,7 @@ interface IProps {
     points: number
 }
 
-const PlayerInfo: React.FC<IProps> = ({ isCurrent, name, color, points }) => (
+const PlayerInfo: React.FC<IProps> = React.memo(({ isCurrent, name, color, points }) => (
     <S.PlayerInfo>
         <S.Content>
             <S.Name>{ name }: </S.Name>
@@ -19,6 +19,6 @@ const PlayerInfo: React.FC<IProps> = ({ isCurrent, name, color, points }) => (
             <S.Mark color={color} />
         )}
     </S.PlayerInfo>
-);
+));
 
 export default PlayerInfo;

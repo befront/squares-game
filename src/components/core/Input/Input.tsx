@@ -6,7 +6,7 @@ interface IProps {
     className?: string,
     name?: string,
     type?: string,
-    value: string,
+    value: any,
     onChange(event: React.ChangeEvent<HTMLInputElement>): void
 };
 

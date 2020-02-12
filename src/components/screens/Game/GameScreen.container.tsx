@@ -1,8 +1,11 @@
 import * as React from 'react';
+import flatten from 'lodash/flatten';
 
-import { useGame } from '@context/Game';
+import { SCREENS } from '@constants';
 
-import { getNextPlayer, getRandomPlayer, getPlayerPoints } from './GameScreen.utils';
+import { useGameState, useGameDispatch } from '@context/Game';
+
+import { getNextPlayer, getRandomPlayer } from './GameScreen.utils';
 
 import GameScreen from './GameScreen';
 
@@ -11,59 +14,60 @@ interface IProps {
 }
 
 const GameScreenContainer: React.FC<IProps> = ({ setCurrentScreen }) => {
-    const [game, dispatchGame] = useGame();
+    const dispatchGame = useGameDispatch();
+    const game = useGameState();
 
-    const [isWinModalOpen, setIsWinModalOpen] = React.useState(false);
-    const [selectedCells, setSelectedCells] = React.useState({});
-    const [currentPlayer, setCurrentPlayer] = React.useState(getRandomPlayer(game.players));
+    const [isWinModalOpen, setIsWinModalOpen] = React.useState<boolean>(false);
+    const [currentPlayer, setCurrentPlayer] = React.useState<PlayerType>(getRandomPlayer(game.players));
 
-    const handleCellClick = (rowIndex: number, columnIndex: number) => {
-        const cellKey = `${rowIndex}:${columnIndex}`;
+    React.useEffect(() => {
+        const cells = flatten(game.players.map(player => player.cells));
 
-        const cells: CellsType = { ...selectedCells };
+        if (cells.length === game.boardSize * game.boardSize) {
+            setIsWinModalOpen(true);
+        }
+    }, [currentPlayer, dispatchGame, game.boardSize, game.players]);
 
-        if (!cells[cellKey]) {
-            cells[cellKey] = {
+    const handleMenuClick = () => {
+        dispatchGame({
+            type: 'CLEAR_PLAYERS'
+        });
+
+        setCurrentScreen(SCREENS.START);
+    };
+
+    const handleRestartClick = () => {
+        dispatchGame({
+            type: 'CLEAR_PLAYERS'
+        });
+
+        setIsWinModalOpen(false);
+    };
+
+    const handleCellClick = React.useCallback(( rowIndex: number, columnIndex: number) => {
+        dispatchGame({
+            type: 'UPDATE_PLAYER_GAME_DATA',
+            payload: {
                 playerId: currentPlayer.id,
                 rowIndex,
                 columnIndex
-            };;
-
-            const playerCells: CellType[] = Object.values(cells).filter(cell => cell.playerId === currentPlayer.id);
-
-            const points = getPlayerPoints(playerCells);
-
-            if (!currentPlayer.points || (points > 1 && points !== currentPlayer.points)) {
-                dispatchGame({
-                    type: 'UPDATE_PLAYER_POINTS',
-                    payload: {
-                        playerId: currentPlayer.id,
-                        points: !currentPlayer.points ? 1 : points
-                    }
-                })
             }
+        })
 
-            setSelectedCells(cells);
-
-            setCurrentPlayer(getNextPlayer(currentPlayer, game.players));
-        }
-
-        if (Object.keys(cells).length === game.boardSize * game.boardSize) {
-            setIsWinModalOpen(true);
-        }
-    };
+        setCurrentPlayer(getNextPlayer(currentPlayer, game.players));
+    }, [currentPlayer, dispatchGame, game.players]);
 
     return (
         <GameScreen
             isWinModalOpen={isWinModalOpen}
             currentPlayer={currentPlayer}
-            selectedCells={selectedCells}
             boardSize={game.boardSize}
             players={game.players}
             setIsWinModalOpen={setIsWinModalOpen}
-            setSelectedCells={setSelectedCells}
             setCurrentScreen={setCurrentScreen}
             onCellClick={handleCellClick}
+            onMenuClick={handleMenuClick}
+            onRestartClick={handleRestartClick}
         />
     );
 };

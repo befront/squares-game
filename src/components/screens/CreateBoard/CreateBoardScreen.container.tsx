@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { SCREENS } from '@constants';
 
-import { useGame } from '@context/Game';
+import { useGameDispatch, useGameState } from '@context/Game';
 
 import CreateBoard from './CreateBoardScreen';
 
@@ -11,7 +11,8 @@ interface IProps {
 }
 
 const CreateBoardContainer: React.FC<IProps> = ({ setCurrentScreen }) => {
-    const [game, dispatchGame] = useGame();
+    const dispatchGame = useGameDispatch();
+    const game = useGameState();
 
     const handleContinueClick = () => {
         if (game.boardSize >= 2 && game.boardSize <= 8) {

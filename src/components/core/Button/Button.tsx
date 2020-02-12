@@ -4,7 +4,7 @@ import * as S from './Button.style';
 
 interface IProps {
     children: React.ReactNode,
-    disabled: boolean,
+    disabled?: boolean,
     className?: string,
     onClick?(): void
 };

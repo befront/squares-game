@@ -12,20 +12,19 @@ import * as S from './GameScreen.style';
 
 interface IProps {
     isWinModalOpen: boolean,
-    selectedCells: CellsType,
     boardSize: number,
     currentPlayer: PlayerType,
-    players: PlayersType,
-    setSelectedCells(cells: CellsType): void,
+    players: PlayerType[],
     setIsWinModalOpen(isOpen: boolean): void,
     setCurrentScreen(screen: string): void
-    onCellClick(row: number, column: number): void
+    onCellClick(row: number, column: number): void,
+    onMenuClick(): void,
+    onRestartClick(): void
 };
 
 const renderRows = (
     size: number,
-    selectedCells: CellsType,
-    players: PlayersType,
+    players: PlayerType[],
     onCellClick: (row: number, column: number) => void
 ) => 
     Array.from(Array(size)).map((value, rowIndex) => (
@@ -33,8 +32,10 @@ const renderRows = (
             { Array.from(Array(size)).map((value, columnIndex) => (
                 <Cell
                     key={columnIndex}
-                    color={getCellColor(rowIndex, columnIndex, players, selectedCells)}
-                    onClick={() => { onCellClick(rowIndex, columnIndex) }}
+                    rowIndex={rowIndex}
+                    columnIndex={columnIndex}
+                    color={getCellColor(rowIndex, columnIndex, players)}
+                    onClick={onCellClick}
                 />
             ))}
         </S.Row>
@@ -42,37 +43,42 @@ const renderRows = (
 
 const GameScreen: React.FC<IProps> = ({
     isWinModalOpen,
-    selectedCells,
     boardSize,
     currentPlayer,
     players,
-    setSelectedCells,
     setIsWinModalOpen,
     setCurrentScreen,
-    onCellClick
+    onCellClick,
+    onMenuClick,
+    onRestartClick
 }) => (
     <Screen>
         <WinModal
             isOpen={isWinModalOpen}
             playerName={getWinPlayerName(players)}
-            setSelectedCells={setSelectedCells}
             setIsWinModalOpen={setIsWinModalOpen}
             setCurrentScreen={setCurrentScreen}
         />
         <S.Header>
-            { Object.keys(players).map((playerId) => (
-                <PlayerInfo
-                    key={playerId}
-                    {...players[playerId]}
-                    isCurrent={isCurrentPlayer(currentPlayer, players[playerId])}
-                />
-            ))}
+            <S.PlayersInfo>
+                { players.map((player) => (
+                    <PlayerInfo
+                        key={player.id}
+                        {...player}
+                        isCurrent={isCurrentPlayer(currentPlayer, player)}
+                    />
+                ))}
+            </S.PlayersInfo>
         </S.Header>
         <S.Inner>
             <S.Board>
-                { renderRows(boardSize, selectedCells, players, onCellClick) }
+                { renderRows(boardSize, players, onCellClick) }
             </S.Board>
         </S.Inner>
+        <S.Actions>
+            <S.RestartButton onClick={onRestartClick}>Restart</S.RestartButton>
+            <S.MenuButton onClick={onMenuClick}>Menu</S.MenuButton>
+        </S.Actions>
     </Screen>
 );
 

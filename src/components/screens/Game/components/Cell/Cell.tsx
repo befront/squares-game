@@ -4,11 +4,20 @@ import * as S from './Cell.style';
 
 interface IProps {
     color: string,
-    onClick(): void
+    rowIndex: number,
+    columnIndex: number,
+    onClick(rowIndex: number, columnIndex: number): void
 }
 
-const Cell: React.FC<IProps> = ({ color, onClick }) => (
-    <S.Cell color={color} onClick={onClick} />
-);
+const Cell: React.FC<IProps> = React.memo(({ rowIndex, columnIndex, color, onClick }) => {
+    console.log('render cell');
+
+    return (
+        <S.Cell
+            color={color}
+            onClick={() => { onClick(rowIndex, columnIndex); }}
+        />
+    );
+});
 
 export default Cell;
