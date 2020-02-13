@@ -6,7 +6,7 @@ import { useGameDispatch, useGameState } from '@context/Game';
 
 import { PLAYERS_COUNT } from './CreatePlayersScreen.constants';
 
-import { hasPlayersNames } from './CreatePlayersScreen.utils';
+import { hasPlayersNames, hasSamePlayerNames } from './CreatePlayersScreen.utils';
 
 import CreatePlayersScreen from './CreatePlayersScreen';
 
@@ -29,7 +29,7 @@ const CreatePlayersScreenContainer: React.FC<IProps> = ({ setCurrentScreen }) =>
     }, [dispatchGame, game.players]);
     
     const handleContinueClick = () => {
-        if (hasPlayersNames(game.players)) {
+        if (hasPlayersNames(game.players) && !hasSamePlayerNames(game.players)) {
             setCurrentScreen(SCREENS.GAME);
         }
     };

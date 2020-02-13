@@ -5,7 +5,7 @@ import { Text } from '@components/core/Text';
 import { Input } from '@components/core/Input';
 import { FormControl } from '@components/core/FormControl';
 
-import { hasPlayersNames } from './CreatePlayersScreen.utils';
+import { hasPlayersNames, hasSamePlayerNames } from './CreatePlayersScreen.utils';
 
 import * as S from './CreatePlayersScreen.style';
 
@@ -33,7 +33,7 @@ const CreatePlayersScreen: React.FC<IProps> = ({
                 ))}
             </S.Content>
             <S.AddPlayerButton onClick={onAddPlayerClick}>Add Player</S.AddPlayerButton>
-            <S.ContinueButton disabled={!hasPlayersNames(players)} onClick={onContinueClick}>Continue</S.ContinueButton>
+            <S.ContinueButton disabled={!hasPlayersNames(players) || hasSamePlayerNames(players)} onClick={onContinueClick}>Continue</S.ContinueButton>
         </S.Inner>
     </Screen>
 );
